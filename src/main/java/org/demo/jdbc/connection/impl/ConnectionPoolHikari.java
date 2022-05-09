@@ -19,6 +19,10 @@ public class ConnectionPoolHikari implements ConnectionProvider {
 		config.setJdbcUrl( jdbcURL );
         config.setUsername( jdbcUser);
         config.setPassword( jdbcPassword );
+        
+        config.setMinimumIdle(20);
+        config.setMaximumPoolSize(30);
+        
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );

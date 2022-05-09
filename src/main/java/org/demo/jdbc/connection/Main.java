@@ -12,9 +12,9 @@ public class Main {
 //	private static final String JDBC_USER = "eaphrmii" ;
 //	private static final String JDBC_PASSWORD = "xxx" ;
 	
-	// PostgreSQL (base "feu") via pgBouncer ( port 6433 ) 
+	// PostgreSQL (base "feu") via pgBouncer ( port 6433 )  ( 6xxx pgBouncer )
 	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:6433/feu" ;
-	// PostgreSQL (base "feu") sans pgBouncer ( port 5433 ) 
+	// PostgreSQL (base "feu") sans pgBouncer ( port 5433 )  ( 5xxx PostgreSql without pgBouncer )
 //	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:5433/feu" ;
 	private static final String JDBC_USER     = "feu" ;
 	private static final String JDBC_PASSWORD = "feu" ;
@@ -22,12 +22,11 @@ public class Main {
 	public static void main(String[] args) {
 		
 		// WITHOUT POOL
-		ConnectionProvider connectionBuilder = new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+//		SqlRunner sqlRunner = new SqlRunner(new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD));
 		
-		// WITH POOL
-		ConnectionProvider connectionPoolHikari = new ConnectionPoolHikari(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+		// WITH POOL HIKARI
+		SqlRunner sqlRunner = new SqlRunner(new ConnectionPoolHikari(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD));
 		
-		SqlRunner sqlRunner = new SqlRunner(connectionBuilder);
 		
 		int numberOfExecutions = 20 ;
 		
