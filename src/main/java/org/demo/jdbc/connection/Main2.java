@@ -15,9 +15,10 @@ public class Main2 {
 	
 	// PostgreSQL (base "feu") via pgBouncer ( port 6433 )  ( 6xxx pgBouncer )
 	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:6433/feu" ;
+	
 	// PostgreSQL (base "feu") sans pgBouncer ( port 5433 )  ( 5xxx PostgreSql without pgBouncer )
 //	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:5433/feu" ;
-//	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:5432/feu" ; // (other PostgreSql)
+	
 	private static final String JDBC_USER     = "feu" ;
 	private static final String JDBC_PASSWORD = "feu" ;
 	
@@ -25,15 +26,15 @@ public class Main2 {
 		
 		ConnectionProvider connectionProvider = new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD);
 
-		List<Connection> connections = getConnections(connectionProvider, 20);
+		List<Connection> connections = getConnections(connectionProvider, 40);
 		
-		wait("\n === Press ENTER to get 20 connections...") ;
-		List<Connection> connections2 = getConnections(connectionProvider, 20);
+		wait("\n === Press ENTER to get more connections...") ;
+		List<Connection> connections2 = getConnections(connectionProvider, 40);
 		
-		wait("\n === Press ENTER to close 20 connections...") ;
+		wait("\n === Press ENTER to close first set of connections...") ;
 		closeConnections(connections);
 		
-		wait("\n === Press ENTER to close 20 connections...") ;
+		wait("\n === Press ENTER to close 2nd set of connections...") ;
 		closeConnections(connections2);
 
 		System.out.println("\n === END OF TEST") ;
@@ -76,9 +77,5 @@ public class Main2 {
 			e.printStackTrace();
 		}
 
-//	    Scanner s = new Scanner(System.in);
-//	    
-//	    s.nextLine(); 
-//	    s.close();
 	}
 }

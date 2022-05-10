@@ -10,10 +10,12 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class ConnectionPoolHikari implements ConnectionProvider {
 
+	private final String jdbcURL;
 	private final HikariDataSource hikariDataSource ;
 
 	public ConnectionPoolHikari(String driverClass, String jdbcURL, String jdbcUser, String jdbcPassword) {
-		// Config
+		this.jdbcURL = jdbcURL;
+		// Pool config
 		HikariConfig config = new HikariConfig();
 		config.setDriverClassName(driverClass);
 		config.setJdbcUrl( jdbcURL );
@@ -26,10 +28,19 @@ public class ConnectionPoolHikari implements ConnectionProvider {
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
+        
+        // disable "Server Prepared Statements" (for pgBouncer/transaction mode)
+        config.addDataSourceProperty( "prepareThreshold" , "0" );  
+        
         // Datasource
         this.hikariDataSource = new HikariDataSource( config );
 	}
 	
+	@Override
+	public String getJdbcUrl() {
+		return jdbcURL;
+	}
+
 	@Override
 	public Connection getConnection() {
 		try {

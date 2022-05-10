@@ -14,18 +14,20 @@ public class Main {
 	
 	// PostgreSQL (base "feu") via pgBouncer ( port 6433 )  ( 6xxx pgBouncer )
 	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:6433/feu" ;
+	
 	// PostgreSQL (base "feu") sans pgBouncer ( port 5433 )  ( 5xxx PostgreSql without pgBouncer )
 //	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:5433/feu" ;
+	
 	private static final String JDBC_USER     = "feu" ;
 	private static final String JDBC_PASSWORD = "feu" ;
 	
 	public static void main(String[] args) {
 		
 		// WITHOUT POOL
-//		SqlRunner sqlRunner = new SqlRunner(new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD));
+		SqlRunner sqlRunner = new SqlRunner(new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD));
 		
 		// WITH POOL HIKARI
-		SqlRunner sqlRunner = new SqlRunner(new ConnectionPoolHikari(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD));
+//		SqlRunner sqlRunner = new SqlRunner(new ConnectionPoolHikari(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD));
 		
 		
 		int numberOfExecutions = 20 ;
@@ -37,14 +39,15 @@ public class Main {
 			String r = sqlRunner.executeSQL(query);
 			System.out.println("   Result : " + r);
 		}
-		long endTime = System.currentTimeMillis();
-		long duration = endTime - startTime ;
-		System.out.println("---");
-		System.out.println("URL : " + JDBC_URL);
-		System.out.println("DURATION (" + numberOfExecutions + " requests) :");
-		System.out.println(" - TOTAL : " + duration + " milliseconds");
-		System.out.println(" - obtain Connection : " + sqlRunner.getObtainConnectionDuration() + " milliseconds");
-		System.out.println(" - close  Connection : " + sqlRunner.getCloseConnectionDuration() + " milliseconds");
+//		long endTime = System.currentTimeMillis();
+//		long duration = endTime - startTime ;
+//		System.out.println("---");
+//		System.out.println("URL : " + JDBC_URL);
+//		System.out.println("DURATION (" + numberOfExecutions + " requests) :");
+//		System.out.println(" - TOTAL : " + duration + " milliseconds");
+//		System.out.println(" - obtain Connection : " + sqlRunner.getObtainConnectionDuration() + " milliseconds");
+//		System.out.println(" - close  Connection : " + sqlRunner.getCloseConnectionDuration() + " milliseconds");
+		Report.printDuration(numberOfExecutions, startTime, sqlRunner);
 	}
 
 }

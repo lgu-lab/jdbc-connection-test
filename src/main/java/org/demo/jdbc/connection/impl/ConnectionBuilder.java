@@ -22,24 +22,25 @@ public class ConnectionBuilder implements ConnectionProvider {
 		Properties jdbcProperties = new Properties() ;
 		jdbcProperties.put("user", jdbcUser);
 		jdbcProperties.put("password", jdbcPassword);
+
+		// disable "Server Prepared Statements" (for pgBouncer/transaction mode) 
+		jdbcProperties.put("prepareThreshold", "0"); 
+		
 		this.properties = jdbcProperties;
 	}
 	
-//	/**
-//	 * Constructor
-//	 * @param driver
-//	 * @param jdbcURL
-//	 * @param properties
-//	 */
-//	public ConnectionBuilder(Driver driver, String jdbcURL, Properties properties) {
-//		super();
-//		if ( driver == null ) {
-//			throw new IllegalArgumentException("driver is null");
-//		}
-//		this.driver = driver;
-//		this.jdbcURL = jdbcURL;
-//		this.properties = properties;
-//	}
+	public Driver getDriver() {
+		return driver;
+	}
+
+	@Override
+	public String getJdbcUrl() {
+		return jdbcURL;
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
 
 	/**
 	 * Creates a new JDBC connection 
