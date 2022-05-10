@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.demo.jdbc.connection.impl.ConnectionBuilder;
 
@@ -26,10 +25,10 @@ public class Main2 {
 		
 		ConnectionProvider connectionProvider = new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD);
 
-		List<Connection> connections = getConnections(connectionProvider, 40);
+		List<Connection> connections = getConnections(connectionProvider, 100);
 		
 		wait("\n === Press ENTER to get more connections...") ;
-		List<Connection> connections2 = getConnections(connectionProvider, 40);
+		List<Connection> connections2 = getConnections(connectionProvider, 100);
 		
 		wait("\n === Press ENTER to close first set of connections...") ;
 		closeConnections(connections);
@@ -37,10 +36,24 @@ public class Main2 {
 		wait("\n === Press ENTER to close 2nd set of connections...") ;
 		closeConnections(connections2);
 
+//		test2(connectionProvider);
+		
 		System.out.println("\n === END OF TEST") ;
 	}
 
-	public static List<Connection> getConnections(ConnectionProvider connectionProvider, int numberOfConnections) {
+	private static void test2(ConnectionProvider connectionProvider) throws SQLException {
+		List<Connection> connections = new LinkedList<>();
+		try {
+			connections = getConnections(connectionProvider, 20);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			wait("\n === Press ENTER to close first set of connections...") ;
+			closeConnections(connections);
+		}
+	}
+	
+	private static List<Connection> getConnections(ConnectionProvider connectionProvider, int numberOfConnections) {
 		System.out.println("getConnections(" + numberOfConnections + ")") ;
 		long startTime = System.currentTimeMillis();
 		List<Connection> list = new LinkedList<>();
@@ -58,13 +71,14 @@ public class Main2 {
 		return list;
 	}
 	
-	public static void closeConnections(List<Connection> connections) throws SQLException {
+	private static void closeConnections(List<Connection> connections) throws SQLException {
 		System.out.println("closeConnections( size = " + connections.size() + ")") ;
 		for ( Connection c : connections ) {
 			c.close();
 		}
 	}
-	public static void wait(String msg) {
+	
+	private static void wait(String msg) {
 	    
 	    System.out.println(msg);
 	    try {
