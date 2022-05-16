@@ -7,10 +7,11 @@ public class Report {
 		long duration = endTime - startTime ;
 		System.out.println("---");
 		System.out.println("URL : " + sqlRunner.getJdbcUrl());
-		System.out.println("DURATION (" + count + " requests) :");
+		System.out.println("Connection provider   : " + sqlRunner.getConnectionProviderClass());
+		System.out.println("Server Prep Statement : " + sqlRunner.isServerPreparedStatementEnabled());
+		System.out.println("DURATION for " + count + " requests :");
 		System.out.println(" - TOTAL : " + duration + " milliseconds");
 		System.out.println(" - obtain Connection : " + sqlRunner.getObtainConnectionDuration() + " milliseconds");
 		System.out.println(" - close  Connection : " + sqlRunner.getCloseConnectionDuration() + " milliseconds");
-
 	}
 }

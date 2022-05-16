@@ -5,6 +5,7 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.demo.jdbc.connection.ConnectionConfig;
 import org.demo.jdbc.connection.ConnectionProvider;
 
 public class ConnectionBuilder implements ConnectionProvider {
@@ -12,22 +13,48 @@ public class ConnectionBuilder implements ConnectionProvider {
 	private final Driver driver;
 	private final String jdbcURL;
 	private final Properties properties;
+	private final boolean serverPreparedStatement ;
 
-	public ConnectionBuilder(String driverClass, String jdbcURL, String jdbcUser, String jdbcPassword) {
-		DriverProvider driverProvider = new DriverProvider(driverClass);
+	/**
+	 * Constructor
+	 * @param connectionConfig
+	 */
+	public ConnectionBuilder(ConnectionConfig connectionConfig ) {
+		DriverProvider driverProvider =  new DriverProvider(connectionConfig.getJdbcDriver()) ;
 		this.driver = driverProvider.getDriver();
-		
-		this.jdbcURL = jdbcURL;
-
+		this.jdbcURL = connectionConfig.getJdbcURL();
 		Properties jdbcProperties = new Properties() ;
-		jdbcProperties.put("user", jdbcUser);
-		jdbcProperties.put("password", jdbcPassword);
-
-		// disable "Server Prepared Statements" (for pgBouncer/transaction mode) 
-		jdbcProperties.put("prepareThreshold", "0"); 
-		
+		jdbcProperties.put("user", connectionConfig.getJdbcUser());
+		jdbcProperties.put("password", connectionConfig.getJdbcPassword());
+		this.serverPreparedStatement = connectionConfig.isServerPreparedStatementEnabled();
+		if ( connectionConfig.isServerPreparedStatementEnabled() ) {
+			jdbcProperties.put("prepareThreshold", "0");
+		}
 		this.properties = jdbcProperties;
 	}
+	
+//	/**
+//	 * Constructor
+//	 * @param driverClass
+//	 * @param jdbcURL
+//	 * @param jdbcUser
+//	 * @param jdbcPassword
+//	 */
+//	public ConnectionBuilder(String driverClass, String jdbcURL, String jdbcUser, String jdbcPassword) {
+//		DriverProvider driverProvider = new DriverProvider(driverClass);
+//		this.driver = driverProvider.getDriver();
+//		
+//		this.jdbcURL = jdbcURL;
+//
+//		Properties jdbcProperties = new Properties() ;
+//		jdbcProperties.put("user", jdbcUser);
+//		jdbcProperties.put("password", jdbcPassword);
+//
+//		// disable "Server Prepared Statements" (for pgBouncer/transaction mode) 
+//		jdbcProperties.put("prepareThreshold", "0"); 
+//		
+//		this.properties = jdbcProperties;
+//	}
 	
 	public Driver getDriver() {
 		return driver;
@@ -36,6 +63,11 @@ public class ConnectionBuilder implements ConnectionProvider {
 	@Override
 	public String getJdbcUrl() {
 		return jdbcURL;
+	}
+	
+	@Override
+	public boolean isServerPreparedStatementEnabled() {
+		return serverPreparedStatement;
 	}
 
 	public Properties getProperties() {

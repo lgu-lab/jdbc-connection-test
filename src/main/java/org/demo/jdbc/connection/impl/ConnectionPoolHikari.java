@@ -3,6 +3,7 @@ package org.demo.jdbc.connection.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.demo.jdbc.connection.ConnectionConfig;
 import org.demo.jdbc.connection.ConnectionProvider;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -12,33 +13,47 @@ public class ConnectionPoolHikari implements ConnectionProvider {
 
 	private final String jdbcURL;
 	private final HikariDataSource hikariDataSource ;
+	private final boolean serverPreparedStatement ;
+	
+	/**
+	 * Constructor
+	 * @param connectionConfig
+	 */
+	public ConnectionPoolHikari(ConnectionConfig connectionConfig) {
+		this.jdbcURL = connectionConfig.getJdbcURL();
+		this.serverPreparedStatement = connectionConfig.isServerPreparedStatementEnabled();
 
-	public ConnectionPoolHikari(String driverClass, String jdbcURL, String jdbcUser, String jdbcPassword) {
-		this.jdbcURL = jdbcURL;
 		// Pool config
-		HikariConfig config = new HikariConfig();
-		config.setDriverClassName(driverClass);
-		config.setJdbcUrl( jdbcURL );
-        config.setUsername( jdbcUser);
-        config.setPassword( jdbcPassword );
+		HikariConfig hikariConfig = new HikariConfig();
+		hikariConfig.setDriverClassName(connectionConfig.getJdbcDriver());
+		hikariConfig.setJdbcUrl( connectionConfig.getJdbcURL() );
+        hikariConfig.setUsername( connectionConfig.getJdbcUser());
+        hikariConfig.setPassword( connectionConfig.getJdbcPassword() );
         
-        config.setMinimumIdle(20);
-        config.setMaximumPoolSize(30);
+        hikariConfig.setMinimumIdle(20);
+        hikariConfig.setMaximumPoolSize(30);
         
-        config.addDataSourceProperty( "cachePrepStmts" , "true" );
-        config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
-        config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
+        hikariConfig.addDataSourceProperty( "cachePrepStmts" , "true" );
+        hikariConfig.addDataSourceProperty( "prepStmtCacheSize" , "250" );
+        hikariConfig.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
         
-        // disable "Server Prepared Statements" (for pgBouncer/transaction mode)
-        config.addDataSourceProperty( "prepareThreshold" , "0" );  
+		if ( this.serverPreparedStatement == false ) {
+	        // disable "Server Prepared Statements" (for pgBouncer/transaction mode)
+			hikariConfig.addDataSourceProperty( "prepareThreshold" , "0" );
+		}
         
         // Datasource
-        this.hikariDataSource = new HikariDataSource( config );
+        this.hikariDataSource = new HikariDataSource( hikariConfig );
 	}
 	
 	@Override
 	public String getJdbcUrl() {
 		return jdbcURL;
+	}
+	
+	@Override
+	public boolean isServerPreparedStatementEnabled() {
+		return serverPreparedStatement;
 	}
 
 	@Override

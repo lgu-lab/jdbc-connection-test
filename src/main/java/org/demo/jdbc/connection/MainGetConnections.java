@@ -8,23 +8,17 @@ import java.util.List;
 
 import org.demo.jdbc.connection.impl.ConnectionBuilder;
 
-public class Main2 {
+public class MainGetConnections {
 
-	private static final String JDBC_DRIVER = "org.postgresql.Driver" ;
-	
-	// PostgreSQL (base "feu") via pgBouncer ( port 6433 )  ( 6xxx pgBouncer )
-	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:6433/feu" ;
-	
-	// PostgreSQL (base "feu") sans pgBouncer ( port 5433 )  ( 5xxx PostgreSql without pgBouncer )
-//	private static final String JDBC_URL = "jdbc:postgresql://10.134.49.136:5433/feu" ;
-	
-	private static final String JDBC_USER     = "feu" ;
-	private static final String JDBC_PASSWORD = "feu" ;
-	
 	public static void main(String[] args) throws SQLException, IOException {
 		
-		ConnectionProvider connectionProvider = new ConnectionBuilder(JDBC_DRIVER, JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+		// port : 6433 = pgBouncer /  5xxx = PostgreSql without pgBouncer
+		// prepared statements enabled : true/false
+		ConnectionConfig connectionConfig = new ConnectionConfig(5433, true);
 
+		// WITHOUT POOL
+		ConnectionProvider connectionProvider = new ConnectionBuilder(connectionConfig);
+		
 		List<Connection> connections = getConnections(connectionProvider, 100);
 		
 		wait("\n === Press ENTER to get more connections...") ;
@@ -65,10 +59,11 @@ public class Main2 {
 		long duration = endTime - startTime ;
 
 		System.out.println("---");
-		System.out.println("URL : " + JDBC_URL);
+		System.out.println("URL : " + connectionProvider.getJdbcUrl());
 		System.out.println("DURATION (" + numberOfConnections + " connections) :");
 		System.out.println(" - TOTAL : " + duration + " milliseconds");
 		return list;
+		
 	}
 	
 	private static void closeConnections(List<Connection> connections) throws SQLException {

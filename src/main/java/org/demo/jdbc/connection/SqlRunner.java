@@ -25,7 +25,15 @@ public class SqlRunner {
 	public String getJdbcUrl() {
 		return connectionProvider.getJdbcUrl();
 	}
+
+	public String getConnectionProviderClass() {
+		return this.connectionProvider.getClass().getSimpleName();
+	}
 	
+	public boolean isServerPreparedStatementEnabled() {
+		return this.connectionProvider.isServerPreparedStatementEnabled();
+	}
+
 	public long getObtainConnectionDuration() {
 		return obtainConnectionDuration;
 	}
@@ -83,19 +91,11 @@ public class SqlRunner {
 		}
 	}
 
-	public int executeQueryWithPreparedStatement(String sql, int value ) {
-		PreparedStatement ps = createPreparedStatement(sql);
-		log("Execute PreparedStatement...");
-		int r = executePreparedStatement(ps, value );
-		
-		closePreparedStatementAndConnection(ps);
-		return r;
-	}
-
+	//-------------------------------------------------------------------------------------
 	public PreparedStatement createPreparedStatement(String sql) {
 		try {
 			Connection connection = getConnection();
-			log("Create PreparedStatement from connection...");
+			log("Create PreparedStatement : " + sql );
 			return connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -113,18 +113,84 @@ public class SqlRunner {
 		}
 	}			
 	
-	public int executePreparedStatement(PreparedStatement ps, int value ) {
+	//-------------------------------------------------------------------------------------
+	// QUERY (SELECT)
+	//-------------------------------------------------------------------------------------
+	public int executeSqlQueryWithPreparedStatement(String sql, int value ) {
+		log("Execute query with PreparedStatement : " + sql + " (" + value + ")");
+		PreparedStatement ps = createPreparedStatement(sql);
+		int r = executeQueryPreparedStatement(ps, value );
+		closePreparedStatementAndConnection(ps);
+		return r;
+	}
+
+	public int executeQueryPreparedStatementInTransaction(PreparedStatement ps, int value ) {
 		try {
 			ps.getConnection().setAutoCommit(false); // Begin Transaction
-			ps.setInt(1, value);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			int r = rs.getInt(1);
-	        rs.close();
+			int r = executeQueryPreparedStatement(ps, value );
 	        ps.getConnection().commit(); // Commit Transaction
 			return r;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public int executeQueryPreparedStatement(PreparedStatement ps, int value ) {
+		log("Execute query ...");
+		try {
+			ps.setInt(1, value);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			int r = rs.getInt(1);
+	        rs.close();
+			return r;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	//-------------------------------------------------------------------------------------
+	// COMMAND (INSERT, UPDATE, DELETE)
+	//-------------------------------------------------------------------------------------
+	public int executeSqlCommandWithPreparedStatement(String sql, int value ) {
+		log("Execute command with PreparedStatement : " + sql + " (" + value + ")");
+		PreparedStatement ps = createPreparedStatement(sql);
+		int r = executeCommandPreparedStatement(ps, value );
+		closePreparedStatementAndConnection(ps);
+		return r;
+	}
+
+	public int executeSqlCommandWithPreparedStatementInTransaction(String sql, int value ) {
+		log("Execute command with PreparedStatement in Transaction : " + sql + " (" + value + ")");
+		PreparedStatement ps = createPreparedStatement(sql);
+		int r = executeCommandPreparedStatementInTransaction(ps, value );
+		closePreparedStatementAndConnection(ps);
+		return r;
+	}
+
+	public int executeCommandPreparedStatementInTransaction(PreparedStatement ps, int value ) {
+		try {
+			log("Begin Transaction...");
+			ps.getConnection().setAutoCommit(false); // Begin Transaction
+			int r = executeCommandPreparedStatement(ps, value );
+			log("Commit Transaction...");
+	        ps.getConnection().commit(); // Commit Transaction
+			return r;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public int executeCommandPreparedStatement(PreparedStatement ps, int value ) {
+		log("Execute command ...");
+		try {
+			ps.setInt(1, value);
+			int r = ps.executeUpdate();
+			return r;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	
 }

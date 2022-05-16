@@ -7,4 +7,7 @@ public interface ConnectionProvider {
 	Connection getConnection();
 	
 	String getJdbcUrl();
+	
+	boolean isServerPreparedStatementEnabled();
+
 }
