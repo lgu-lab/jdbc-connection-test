@@ -1,12 +1,12 @@
-package org.demo.jdbc.connection.impl;
+package org.demo.jdbc.connection.tooling.impl;
 
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.demo.jdbc.connection.ConnectionConfig;
-import org.demo.jdbc.connection.ConnectionProvider;
+import org.demo.jdbc.connection.tooling.ConnectionConfig;
+import org.demo.jdbc.connection.tooling.ConnectionProvider;
 
 public class ConnectionBuilder implements ConnectionProvider {
 

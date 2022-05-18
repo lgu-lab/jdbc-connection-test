@@ -1,4 +1,4 @@
-package org.demo.jdbc.connection.impl;
+package org.demo.jdbc.connection.tooling.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Driver;

@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.demo.jdbc.connection.impl.ConnectionBuilder;
-import org.demo.jdbc.connection.impl.ConnectionPoolHikari;
+import org.demo.jdbc.connection.tooling.ConnectionConfig;
+import org.demo.jdbc.connection.tooling.ConnectionProvider;
+import org.demo.jdbc.connection.tooling.Report;
+import org.demo.jdbc.connection.tooling.SqlRunner;
+import org.demo.jdbc.connection.tooling.impl.ConnectionBuilder;
+import org.demo.jdbc.connection.tooling.impl.ConnectionPoolHikari;
 
-public class MainCommandsWithPrepStmt {
+public class TestCommandsWithPrepStmt {
 
 	public static void main(String[] args) throws SQLException, IOException {
 		
 		// port : 6433 = pgBouncer /  5xxx = PostgreSql without pgBouncer
 		// prepared statements enabled : true/false
-		ConnectionConfig connectionConfig = new ConnectionConfig(6433, false);
+		ConnectionConfig connectionConfig = new ConnectionConfig(6433, true);
 
 		// WITHOUT POOL
 //		ConnectionProvider connectionProvider = new ConnectionBuilder(connectionConfig);
@@ -22,10 +26,10 @@ public class MainCommandsWithPrepStmt {
 		
 		String sql = "INSERT INTO tmp (id, name) values ( ?, 'abcd' ) ";
 		
-		test1(connectionProvider, sql);
-		System.out.println("----------------------------");
-		test2(connectionProvider, sql);
-		System.out.println("----------------------------");
+//		test1(connectionProvider, sql);
+//		System.out.println("----------------------------");
+//		test2(connectionProvider, sql);
+//		System.out.println("----------------------------");
 		test3(connectionProvider, sql);
 	}
 	
@@ -34,10 +38,12 @@ public class MainCommandsWithPrepStmt {
 		System.out.println("--- test1 : 1 connection for each prepared statement ");
 		int n = 10 ;
 		long startTime = System.currentTimeMillis();
+		
 		for ( int i = 1 ; i <= n ; i++ ) {
 			int r = sqlRunner.executeSqlCommandWithPreparedStatement(sql, i);
 			System.out.println("    r = " + r);
 		}
+		
 		Report.printDuration(n, startTime, sqlRunner);
 	}
 
@@ -54,19 +60,20 @@ public class MainCommandsWithPrepStmt {
 		}
 		sqlRunner.closePreparedStatementAndConnection(ps);
 		
-		System.out.println("\n === END OF TEST") ;
 		Report.printDuration(n, startTime, sqlRunner);
 	}
 
 	public static void test3(ConnectionProvider connectionProvider, String sql) {
 		SqlRunner sqlRunner = new SqlRunner(connectionProvider);
 		System.out.println("--- test3 : 1 connection for each prepared statement + transaction");
-		int n = 10 ;
+		int n = 100 ;
 		long startTime = System.currentTimeMillis();
+		
 		for ( int i = 1 ; i <= n ; i++ ) {
 			int r = sqlRunner.executeSqlCommandWithPreparedStatementInTransaction(sql, i);
 			System.out.println("    r = " + r);
 		}
+		
 		Report.printDuration(n, startTime, sqlRunner);
 	}
 }

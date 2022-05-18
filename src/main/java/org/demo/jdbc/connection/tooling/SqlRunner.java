@@ -1,4 +1,4 @@
-package org.demo.jdbc.connection;
+package org.demo.jdbc.connection.tooling;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SqlRunner {
+public class SqlRunner { 
 
 	private final ConnectionProvider connectionProvider;
 	
@@ -116,18 +116,18 @@ public class SqlRunner {
 	//-------------------------------------------------------------------------------------
 	// QUERY (SELECT)
 	//-------------------------------------------------------------------------------------
-	public int executeSqlQueryWithPreparedStatement(String sql, int value ) {
+	public Object executeSqlQueryWithPreparedStatement(String sql, int value ) {
 		log("Execute query with PreparedStatement : " + sql + " (" + value + ")");
 		PreparedStatement ps = createPreparedStatement(sql);
-		int r = executeQueryPreparedStatement(ps, value );
+		Object r = executeQueryPreparedStatement(ps, value );
 		closePreparedStatementAndConnection(ps);
 		return r;
 	}
 
-	public int executeQueryPreparedStatementInTransaction(PreparedStatement ps, int value ) {
+	public Object executeQueryPreparedStatementInTransaction(PreparedStatement ps, int value ) {
 		try {
 			ps.getConnection().setAutoCommit(false); // Begin Transaction
-			int r = executeQueryPreparedStatement(ps, value );
+			Object r = executeQueryPreparedStatement(ps, value );
 	        ps.getConnection().commit(); // Commit Transaction
 			return r;
 		} catch (SQLException e) {
@@ -135,13 +135,15 @@ public class SqlRunner {
 		}
 	}
 	
-	public int executeQueryPreparedStatement(PreparedStatement ps, int value ) {
+	public Object executeQueryPreparedStatement(PreparedStatement ps, int value ) {
 		log("Execute query ...");
 		try {
 			ps.setInt(1, value);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			int r = rs.getInt(1);
+			Object r = null;
+			if ( rs.next() ) {
+				r = rs.getObject(1);
+			}
 	        rs.close();
 			return r;
 		} catch (SQLException e) {

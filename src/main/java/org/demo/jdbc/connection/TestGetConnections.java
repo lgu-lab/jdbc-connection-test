@@ -6,9 +6,11 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.demo.jdbc.connection.impl.ConnectionBuilder;
+import org.demo.jdbc.connection.tooling.ConnectionConfig;
+import org.demo.jdbc.connection.tooling.ConnectionProvider;
+import org.demo.jdbc.connection.tooling.impl.ConnectionBuilder;
 
-public class MainGetConnections {
+public class TestGetConnections {
 
 	public static void main(String[] args) throws SQLException, IOException {
 		

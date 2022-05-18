@@ -1,4 +1,4 @@
-package org.demo.jdbc.connection;
+package org.demo.jdbc.connection.tooling;
 
 import java.sql.Connection;
 

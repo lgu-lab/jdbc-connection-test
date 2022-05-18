@@ -1,10 +1,10 @@
-package org.demo.jdbc.connection.impl;
+package org.demo.jdbc.connection.tooling.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.demo.jdbc.connection.ConnectionConfig;
-import org.demo.jdbc.connection.ConnectionProvider;
+import org.demo.jdbc.connection.tooling.ConnectionConfig;
+import org.demo.jdbc.connection.tooling.ConnectionProvider;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

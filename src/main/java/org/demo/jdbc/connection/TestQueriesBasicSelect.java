@@ -1,8 +1,12 @@
 package org.demo.jdbc.connection;
 
-import org.demo.jdbc.connection.impl.ConnectionBuilder;
+import org.demo.jdbc.connection.tooling.ConnectionConfig;
+import org.demo.jdbc.connection.tooling.ConnectionProvider;
+import org.demo.jdbc.connection.tooling.Report;
+import org.demo.jdbc.connection.tooling.SqlRunner;
+import org.demo.jdbc.connection.tooling.impl.ConnectionBuilder;
 
-public class MainQueriesBasicSelect {
+public class TestQueriesBasicSelect {
 
 	public static void main(String[] args) {
 		
@@ -27,6 +31,20 @@ public class MainQueriesBasicSelect {
 		}
 
 		Report.printDuration(numberOfExecutions, startTime, sqlRunner);
+	}
+	
+	public static void test1(ConnectionProvider connectionProvider, String sql) {
+		SqlRunner sqlRunner = new SqlRunner(connectionProvider);
+		System.out.println("--- test1 : 1 connection for each prepared statement ");
+		int n = 10 ;
+		long startTime = System.currentTimeMillis();
+		
+		for ( int i = 1 ; i <= n ; i++ ) {
+			Object r = sqlRunner.executeSqlQueryWithPreparedStatement(sql, i);
+			System.out.println("    r = " + r);
+		}
+		
+		Report.printDuration(n, startTime, sqlRunner);
 	}
 
 }
